@@ -1,9 +1,4 @@
 TABULEIRO_TAMANHO = 5
-# ===== REMOVIDO DAQUI =====
-# As variáveis globais abaixo foram removidas pois o estado da contagem
-# de turnos da casa central agora é gerenciado pela classe GameServer.
-# contador_turnos_peca_central = 0
-# posicao_peca_central = None
 
 def criar_tabuleiro():
     return [[0 for _ in range(TABULEIRO_TAMANHO)] for _ in range(TABULEIRO_TAMANHO)]
@@ -68,10 +63,10 @@ def existe_captura_possivel(tabuleiro, jogador_atual):
                         if eh_movimento_valido(tabuleiro, linha, coluna, l_dest, c_dest, jogador_atual):
                             copia = [r[:] for r in tabuleiro]
                             realizar_movimento(copia, linha, coluna, l_dest, c_dest)
-                            # Verifica se houve captura após o movimento
+                            
                             temp = [r[:] for r in copia]
                             verificar_e_realizar_capturas(copia, l_dest, c_dest, jogador_atual)
-                            if copia != temp:  # Compara com estado pós-movimento
+                            if copia != temp:  
                                 return True
     return False
 
@@ -88,29 +83,6 @@ def pode_continuar_jogada_apos_captura(tabuleiro, linha, coluna, jogador_atual):
                 if copia != temp:
                     return True
     return False
-
-# ===== REMOVIDO DAQUI =====
-# A função verificar_regras_casa_central foi removida pois sua lógica,
-# que depende de estado, foi movida para a classe GameServer.
-#def verificar_regras_casa_central(tabuleiro):
-#    global contador_turnos_peca_central, posicao_peca_central
-#
-#    centro = TABULEIRO_TAMANHO // 2
-#    peca = tabuleiro[centro][centro]
-#
-#    if peca != 0:
-#        if posicao_peca_central == (centro, centro):
-#            contador_turnos_peca_central += 1
-#        else:
-#            posicao_peca_central = (centro, centro)
-#            contador_turnos_peca_central = 1
-#    else:
-#        posicao_peca_central = None
-#        contador_turnos_peca_central = 0
-#
-#    if peca != 0 and contador_turnos_peca_central >= 3:
-#        return False
-#    return True
 
 def existe_captura_com_movimento(tabuleiro, jogador_id):
     for i in range(TABULEIRO_TAMANHO):
@@ -143,23 +115,23 @@ def peca_central_bloqueada(tabuleiro, jogador_id):
     if tabuleiro[centro][centro] != jogador_id:
         return False
     
-    # Verifica todos os movimentos possíveis da peça central
+    
     for dl, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         novo_l = centro + dl
         novo_c = centro + dc
         if (0 <= novo_l < TABULEIRO_TAMANHO and 
             0 <= novo_c < TABULEIRO_TAMANHO and 
             tabuleiro[novo_l][novo_c] == 0):
-            return False  # A peça tem para onde mover
-    return True  # Está completamente bloqueada
+            return False  
+    return True  
 
 def peca_esta_bloqueada(tabuleiro, linha, coluna):
     """Verifica se uma peça específica em uma dada posição não tem movimentos legais."""
-    # Verifica as 4 direções adjacentes
+    
     for dl, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
         nl, nc = linha + dl, coluna + dc
-        # Se encontrar pelo menos uma casa válida e vazia, a peça não está bloqueada
+        
         if 0 <= nl < 5 and 0 <= nc < 5 and tabuleiro[nl][nc] == 0:
             return False
-    # Se percorreu todas as direções e não encontrou nenhuma casa vazia, a peça está bloqueada
+
     return True
