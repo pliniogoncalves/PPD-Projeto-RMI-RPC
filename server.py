@@ -17,7 +17,7 @@ from game_logic import (
     criar_tabuleiro, verificar_vitoria, eh_movimento_valido,
     realizar_movimento, verificar_e_realizar_capturas, proximo_jogador,
     eh_casa_central, pode_continuar_jogada_apos_captura,
-    existe_captura_com_movimento, jogador_esta_bloqueado
+    existe_captura_com_movimento, jogador_esta_bloqueado, peca_esta_bloqueada
 )
 
 # ==============================================================================
@@ -163,27 +163,29 @@ class GameServer:
                 return False
 
             # PRIORIDADE 2: Regra dos 3 Turnos da Casa Central
-            # Se a peça do jogador está no centro há 2 turnos, ele é FORÇADO a movê-la.
             peca_no_centro = self.tabuleiro[2][2]
-            if peca_no_centro == player_id and self.jogador_peca_central == player_id and self.turnos_peca_central >= 2:
-                if (linha_origem, coluna_origem) != (2, 2):
+            if peca_no_centro == player_id and self.jogador_peca_central == player_id and self.turnos_peca_central >= 3:
+            
+                # ===== NOVA SUB-CONDIÇÃO: A peça central está, ela mesma, bloqueada? =====
+                if peca_esta_bloqueada(self.tabuleiro, 2, 2):
+                    self.mensagens_erro[player_id] = "Peça central bloqueada! Remova uma peça adversária adjacente."
+                    self.modo_remocao[player_id] = True
+                    return False # Ativa o modo de remoção para resolver o bloqueio específico
+                
+                # Se a peça central não estiver bloqueada, a regra original se aplica
+                elif (linha_origem, coluna_origem) != (2, 2):
                     self.mensagens_erro[player_id] = "Regra dos 3 turnos: Você DEVE mover a peça central."
                     return False
-                # Se ele está movendo a peça central, a jogada continua para as próximas validações.
 
             # PRIORIDADE 3: Captura Obrigatória
-            # Se não se encaixa nas regras acima, verificamos se existe uma captura disponível no tabuleiro.
             elif existe_captura_com_movimento(self.tabuleiro, player_id):
-                # Simula o movimento proposto para ver se ele resulta em captura
                 copia_tabuleiro = [row[:] for row in self.tabuleiro]
                 if eh_movimento_valido(copia_tabuleiro, linha_origem, coluna_origem, linha_destino, coluna_destino, player_id):
                     realizar_movimento(copia_tabuleiro, linha_origem, coluna_origem, linha_destino, coluna_destino)
-                    # Se o movimento proposto não realiza uma captura, ele é inválido.
                     if not verificar_e_realizar_capturas(copia_tabuleiro, linha_destino, coluna_destino, player_id):
                         self.mensagens_erro[player_id] = "Movimento inválido. Existe uma captura obrigatória a ser feita."
                         return False
                 else:
-                    # Se o movimento proposto nem é válido, informa o jogador.
                     self.mensagens_erro[player_id] = "Movimento inválido. Lembre-se que há uma captura obrigatória."
                     return False
             

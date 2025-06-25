@@ -152,3 +152,14 @@ def peca_central_bloqueada(tabuleiro, jogador_id):
             tabuleiro[novo_l][novo_c] == 0):
             return False  # A peça tem para onde mover
     return True  # Está completamente bloqueada
+
+def peca_esta_bloqueada(tabuleiro, linha, coluna):
+    """Verifica se uma peça específica em uma dada posição não tem movimentos legais."""
+    # Verifica as 4 direções adjacentes
+    for dl, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+        nl, nc = linha + dl, coluna + dc
+        # Se encontrar pelo menos uma casa válida e vazia, a peça não está bloqueada
+        if 0 <= nl < 5 and 0 <= nc < 5 and tabuleiro[nl][nc] == 0:
+            return False
+    # Se percorreu todas as direções e não encontrou nenhuma casa vazia, a peça está bloqueada
+    return True
