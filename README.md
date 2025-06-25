@@ -4,8 +4,8 @@ Este é um projeto do jogo de tabuleiro Seega, implementado em Python. O jogo ut
 
 ## Estrutura do Projeto
 
--   **`server_rpc.py`**: O servidor central do jogo. Ele gerencia o estado do tabuleiro, as regras, os turnos dos jogadores e a comunicação.
--   **`gui_rpc.py`**: O cliente com interface gráfica. Utiliza a biblioteca Pygame para desenhar o tabuleiro e interagir com o jogador.
+-   **`server.py`**: O servidor central do jogo. Ele gerencia o estado do tabuleiro, as regras, os turnos dos jogadores e a comunicação.
+-   **`gui.py`**: O cliente com interface gráfica. Utiliza a biblioteca Pygame para desenhar o tabuleiro e interagir com o jogador.
 -   **`game_logic.py`**: Um módulo que contém toda a lógica de regras do jogo Seega (validação de movimentos, capturas, condição de vitória, etc.). É utilizado pelo servidor.
 
 ## Requisitos
